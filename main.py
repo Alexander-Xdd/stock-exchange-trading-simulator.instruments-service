@@ -8,15 +8,17 @@ app = FastAPI()
 
 
 @app.get("/get_currencies")
-async def root(limit: int = 15, page: int = 1, sort_type: str = None):
+async def get_currencies(limit: int = 15, page: int = 1, sort_type: str = None):
     #validation(instrument_name, position, limit, filter_type)
-    currencies_mas = PostgresInstrumentsManager(limit = limit, page = page, sort_type = sort_type).get_currencies()
-    return currencies_mas
+    instruments_mas = PostgresInstrumentsManager(limit = limit, page = page, sort_type = sort_type).get_currencies()
+    return instruments_mas
 
 
-@app.get("/set/{value}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+@app.get("/get_shares")
+async def get_shares(limit: int = 15, page: int = 1, sort_type: str = None, currency: str = None):
+    #validation(instrument_name, position, limit, filter_type)
+    instruments_mas = PostgresInstrumentsManager(limit = limit, page = page, sort_type = sort_type).get_shares()
+    return instruments_mas
 
 
 
