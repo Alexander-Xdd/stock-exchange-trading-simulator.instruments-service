@@ -1,13 +1,13 @@
-from db_adapters import PostgresAdapter
+from db_adapters import PostgresAdapter, mongo_conn
 from utils.helpers import get_filters
 
 sort_dict = {
             "id": "id",
             None: "prev_price_diff ASC",
-            "prev_price_diff_increase": "prev_price_diff ASC",
-            "prev_price_diff_decrease": "prev_price_diff DESC",
-            "first_price_diff_increase": "first_price_diff ASC",
-            "first_price_diff_decrease": "first_price_diff DESC",
+            "prev_price_diff_increase": "prev_perc_diff ASC",
+            "prev_price_diff_decrease": "prev_perc_diff DESC",
+            "first_price_diff_increase": "first_perc_diff ASC",
+            "first_price_diff_decrease": "first_perc_diff DESC",
             "price_increase": "price_units ASC",
             "price_decrease": "price_units DESC",
             "name_increase": "name ASC",
@@ -68,7 +68,9 @@ class PostgresCurrenciesManager(PostgresInstrumentsManager):
                 prev_price,
                 prev_price_diff,
                 name,
-                figi
+                figi,
+                COALESCE(((100 * first_price_diff) / NULLIF(price_units, 0)), 0) AS first_perc_diff,
+                COALESCE(((100 * prev_price_diff) / NULLIF(price_units, 0)), 0) AS prev_perc_diff
             FROM
                 temp
             WHERE
@@ -157,7 +159,10 @@ class PostgresSharesManager(PostgresInstrumentsManager):
                         prev_price,
                         prev_price_diff,
                         name,
-                        figi
+                        figi,
+                        
+                        COALESCE(((100 * first_price_diff) / NULLIF(price_units, 0)), 0) AS first_perc_diff,
+                        COALESCE(((100 * prev_price_diff) / NULLIF(price_units, 0)), 0) AS prev_perc_diff
                     FROM
                         temp
                     WHERE
@@ -254,7 +259,10 @@ class PostgresEtfsManager(PostgresInstrumentsManager):
                         prev_price,
                         prev_price_diff,
                         name,
-                        figi
+                        figi,
+                        
+                        COALESCE(((100 * first_price_diff) / NULLIF(price_units, 0)), 0) AS first_perc_diff,
+                        COALESCE(((100 * prev_price_diff) / NULLIF(price_units, 0)), 0) AS prev_perc_diff
                     FROM
                         temp
                     WHERE
@@ -293,3 +301,31 @@ class PostgresEtfsManager(PostgresInstrumentsManager):
                    "figi": element[17]}
             instruments_mas.append(obj)
         return instruments_mas
+
+
+
+class MongoInstrumentsManager:
+    def __init__(self, figi):
+        self._db = mongo_conn()
+        self._figi = figi
+
+
+    def get_currency(self):
+        collection = self._db.currencies
+        temp = collection.find_one({"figi": self._figi})
+        temp.pop("_id", None)
+        return temp
+
+
+    def get_share(self):
+        collection = self._db.shares
+        temp = collection.find_one({"figi": self._figi})
+        temp.pop("_id", None)
+        return temp
+
+
+    def get_etf(self):
+        collection = self._db.etfs
+        temp = collection.find_one({"figi": self._figi})
+        temp.pop("_id", None)
+        return temp

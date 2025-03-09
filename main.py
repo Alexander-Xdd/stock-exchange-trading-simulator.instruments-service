@@ -1,12 +1,19 @@
 from fastapi import FastAPI, HTTPException
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 
 from config import SERVER_PORT, SERVER_HOST, SERVER_LOG_LEVEL
-from instruments_managers import PostgresCurrenciesManager, PostgresSharesManager, PostgresEtfsManager
+from instruments_managers import PostgresCurrenciesManager, PostgresSharesManager, PostgresEtfsManager, MongoInstrumentsManager
 from utils.validators import validation_currencies, validation_shares, validation_etfs
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Укажите домен вашего фронтенда
+    allow_credentials=True,
+    allow_methods=["*"],  # Разрешить все методы
+    allow_headers=["*"],  # Разрешить все заголовки
+)
 
 @app.get("/get_currencies")
 def get_currencies(limit: int = 15, page: int = 1, sort_type: str = None):
@@ -36,6 +43,21 @@ def get_etfs(limit: int = 15, page: int = 1, sort_type: str = None,
                                             currency = filter_currency, country_of_risk_name = filter_country,
                                             sector = filter_sector).get()
     return instruments_mas
+
+
+@app.get("/get_currency_by_figi")
+def get_currency_by_figi(figi: str):
+    return MongoInstrumentsManager(figi=figi).get_currency()
+
+
+@app.get("/get_share_by_figi")
+def get_share_by_figi(figi: str):
+    return MongoInstrumentsManager(figi=figi).get_share()
+
+
+@app.get("/get_etf_by_figi")
+def get_etf_by_figi(figi: str):
+    return MongoInstrumentsManager(figi=figi).get_etf()
 
 
 

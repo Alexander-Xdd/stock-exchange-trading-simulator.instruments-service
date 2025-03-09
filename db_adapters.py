@@ -1,4 +1,5 @@
 import psycopg2
+from pymongo import MongoClient
 from config import DBNAME, HOST, USER, PASSWORD, PORT, MONGO_HOST, MONGO_PORT
 
 class PostgresAdapter:
@@ -29,3 +30,12 @@ class PostgresAdapter:
     def disconnect(self):
         self.__cursor.close()
         self.__connection.close()
+
+
+def mongo_conn():
+    try:
+        db = MongoClient(MONGO_HOST, MONGO_PORT).sets
+    except Exception as e:
+        print("Ошибка подключения к MongoDB", e)
+        db = None
+    return db
