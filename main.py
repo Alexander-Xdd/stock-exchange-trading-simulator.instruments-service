@@ -25,7 +25,7 @@ def get_currencies(limit: int = 15, page: int = 1, sort_type: str = None):
 
 @app.get("/get_shares")
 def get_shares(limit: int = 15, page: int = 1, sort_type: str = None,
-               filter_currency: str = None, filter_country: str = None, filter_sector: str = None, filter_div: int = None):
+               filter_currency: str = None, filter_country: str = None, filter_sector: str = None, filter_div: str = None):
     validation_shares(limit, page, sort_type, filter_currency, filter_country, filter_div)
 
     instruments_mas = PostgresSharesManager(limit, page, sort_type,

@@ -44,14 +44,14 @@ def validation_shares(limit, page, sort_type, filter_currency, filter_country, f
     validation_limit(limit)
     validation_page(page)
     validation_sort_type(sort_type)
-    validation_filter_currency(filter_currency)
-    validation_filter_country(filter_country)
-    validation_filter_div(filter_div)
+    #validation_filter_currency(filter_currency)
+    #validation_filter_country(filter_country)
+    #validation_filter_div(filter_div)
 
 
 def validation_etfs(limit, page, sort_type, filter_currency, filter_country):
     validation_limit(limit)
     validation_page(page)
     validation_sort_type(sort_type)
-    validation_filter_currency(filter_currency)
-    validation_filter_country(filter_country)
+    #validation_filter_currency(filter_currency)
+    #validation_filter_country(filter_country)

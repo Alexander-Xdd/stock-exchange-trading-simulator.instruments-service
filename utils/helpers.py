@@ -16,15 +16,15 @@ filter_sector_dict = {
 }
 filter_div_dict = {
     None: None,
-    1: "True",
-    0: "False"
+    "1": "True",
+    "0": "False"
 }
 
 
 def get_filters(kwargs):
     srt = ""
     for key, value in kwargs.items():
-        if value is None:
+        if value is None or value == '':
             continue
         else:
             if key == "currency":
