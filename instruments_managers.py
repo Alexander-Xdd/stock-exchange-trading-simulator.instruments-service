@@ -304,6 +304,44 @@ class PostgresEtfsManager(PostgresInstrumentsManager):
 
 
 
+class PostgresSearchManager:
+    def __init__(self, keyword, limit):
+        self._psql = PostgresAdapter()
+        self._keyword = '%' + keyword + '%'
+        self._limit = limit
+
+    def get(self):
+        params = (self._keyword, self._keyword, self._limit)
+        query = f"""
+            SELECT
+                id,
+                name,
+                figi,
+                instrument_name_id
+            FROM
+                instruments
+            WHERE
+                name ILIKE %s OR figi ILIKE %s
+            LIMIT
+                %s;
+        """
+
+        self._psql.connect()
+        data = self._psql.fetch_data(query, params)
+        self._psql.disconnect()
+
+        instruments_mas = []
+        for element in data:
+            obj = {"id": element[0],
+                   "name": element[1],
+                   "figi": element[2],
+                   "instrument_name_id": element[3]}
+            instruments_mas.append(obj)
+
+        return instruments_mas
+
+
+
 class MongoInstrumentsManager:
     def __init__(self, figi):
         self._db = mongo_conn()

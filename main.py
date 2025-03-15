@@ -3,7 +3,8 @@ import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import SERVER_PORT, SERVER_HOST, SERVER_LOG_LEVEL
-from instruments_managers import PostgresCurrenciesManager, PostgresSharesManager, PostgresEtfsManager, MongoInstrumentsManager
+from instruments_managers import PostgresCurrenciesManager, PostgresSharesManager, PostgresEtfsManager, \
+    MongoInstrumentsManager, PostgresSearchManager
 from utils.validators import validation_currencies, validation_shares, validation_etfs
 
 app = FastAPI()
@@ -58,6 +59,13 @@ def get_share_by_figi(figi: str):
 @app.get("/get_etf_by_figi")
 def get_etf_by_figi(figi: str):
     return MongoInstrumentsManager(figi=figi).get_etf()
+
+
+@app.get("/get_instruments_by_name")
+def get_instruments_by_name(keyword: str):
+    instruments_mas = PostgresSearchManager(keyword=keyword, limit=15).get()
+    return instruments_mas
+
 
 
 

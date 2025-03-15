@@ -2,7 +2,7 @@ filter_currency_dict = {
     None: None,
     "RUB": "rub",
     "USD": "usd",
-    "CNY": "cny"
+    "HKD": "hkd"
 }
 filter_country_dict = {
     None: None,
